@@ -1740,42 +1740,77 @@ ${itemsListStr}
       // دي اللقطة الجديدة: الكود ده بيسحب المنتجات من قاعدة البيانات عشان تظهر في المتجر
       
     </script>
-  </body>
-</html>
-<script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      // دي بيانات الربط بتاعتك اللي اشتغلت من شوية
-      const firebaseConfig = {
-        apiKey: "حط_الـ_API_KEY_بتاعك",
-        authDomain: "kitty-style.firebaseapp.com",
-        projectId: "kitty-style",
-        storageBucket: "kitty-style.appspot.com",
-        messagingSenderId: "رقم_الـ_Sender_ID",
-        appId: "رقم_الـ_App_ID"
-      };
+        const firebaseConfig = {
+          apiKey: "حط_الـ_API_KEY_بتاعك",
+          authDomain: "kitty-style.firebaseapp.com",
+          projectId: "kitty-style",
+          storageBucket: "kitty-style.appspot.com",
+          messagingSenderId: "رقم_الـ_Sender_ID",
+          appId: "رقم_الـ_App_ID"
+        };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-      // دي اللقطة الجديدة: الكود ده بيسحب المنتجات من قاعدة البيانات عشان تظهر في المتجر
-      async function loadProducts() {
-        try {
-          const querySnapshot = await getDocs(collection(db, "products"));
-          querySnapshot.forEach((doc) => {
-            console.log("لقيت منتج:", doc.data());
-          });
-        } catch (e) {
-          console.log("لسه مفيش منتجات أو حصل خطأ:", e);
+        async function loadProducts() {
+          try {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            querySnapshot.forEach((doc) => {
+              console.log("لقيت منتج:", doc.data());
+            });
+          } catch (e) {
+            console.log("لسه مفيش منتجات أو حصل خطأ:", e);
+          }
         }
-      }
 
-      loadProducts();
-    </script>
-  </body>
-</html>
+        function loadProductsRealtime() {
+          const grid = document.getElementById("productsGrid");
+          if (!grid) return;
 
-</body>
+          onSnapshot(collection(db, "products"), (snapshot) => {
+            grid.innerHTML = "";
+            let productsCount = 0;
 
-</html>
+            snapshot.forEach((doc) => {
+              const p = doc.data();
+              const pId = doc.id;
+              productsCount++;
+
+              const isSoldOut = p.stock <= 0;
+
+              const card = document.createElement("div");
+              card.className = "bg-white rounded-2xl p-3 border border-pink-100 flex flex-col justify-between relative shadow-sm";
+
+              card.innerHTML = `
+                ${isSoldOut ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">خلصت (Sold Out)</span>' : ''}
+                <div>
+                    <div class="w-full h-36 bg-pink-50 rounded-xl overflow-hidden mb-2">
+                        <img src="${p.image || ''}" alt="${p.name}" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-extrabold text-sm text-gray-900">${p.name}</h4>
+                    <p class="text-xs text-gray-500">المخزون: <span class="font-bold ${p.stock < 3 ? 'text-red-500' : 'text-gray-700'}">${p.stock} قطع</span></p>
+                </div>
+                <div class="flex items-center justify-between pt-2 mt-2 border-t border-gray-100">
+                    <span class="font-black text-brand-600 text-sm">${p.price} ج.م</span>
+                    <button onclick="addToCart('${pId}')" ${isSoldOut ? 'disabled' : ''} class="bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 text-white text-xs font-bold px-3 py-1.5 rounded-xl">
+                        ${isSoldOut ? 'خلصت' : 'أضف للسلة'}
+                    </button>
+                </div>
+              `;
+              grid.appendChild(card);
+            });
+
+            const countBadge = document.getElementById("productsCountBadge");
+            if (countBadge) countBadge.textContent = productsCount;
+          });
+        }
+
+        loadProducts();
+        loadProductsRealtime();
+      </script>
+    </body>
+  </html>
