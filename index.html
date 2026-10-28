@@ -1697,5 +1697,85 @@ ${itemsListStr}
       initDatabase();
     });
   </script>
+<!-- كل شغل الموقع والديازاين بتاعك هنا -->
+
+    <!-- حط السكربت بتاع فايربيز هنا فوق قفلة البادي -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "حط_الـ_API_KEY_بتاعك",
+        authDomain: "kitty-style.firebaseapp.com",
+        projectId: "kitty-style",
+        storageBucket: "kitty-style.appspot.com",
+        messagingSenderId: "رقم_الـ_Sender_ID",
+        appId: "رقم_الـ_App_ID"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      console.log("تم الربط بنجاح!");
+    </script>
+
+  </body>
+</html>
+<script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      // دي بيانات الربط بتاعتك اللي اشتغلت من شوية
+      const firebaseConfig = {
+        apiKey: "حط_الـ_API_KEY_بتاعك",
+        authDomain: "kitty-style.firebaseapp.com",
+        projectId: "kitty-style",
+        storageBucket: "kitty-style.appspot.com",
+        messagingSenderId: "رقم_الـ_Sender_ID",
+        appId: "رقم_الـ_App_ID"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // دي اللقطة الجديدة: الكود ده بيسحب المنتجات من قاعدة البيانات عشان تظهر في المتجر
+      
+    </script>
+  </body>
+</html>
+<script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      // دي بيانات الربط بتاعتك اللي اشتغلت من شوية
+      const firebaseConfig = {
+        apiKey: "حط_الـ_API_KEY_بتاعك",
+        authDomain: "kitty-style.firebaseapp.com",
+        projectId: "kitty-style",
+        storageBucket: "kitty-style.appspot.com",
+        messagingSenderId: "رقم_الـ_Sender_ID",
+        appId: "رقم_الـ_App_ID"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // دي اللقطة الجديدة: الكود ده بيسحب المنتجات من قاعدة البيانات عشان تظهر في المتجر
+      async function loadProducts() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "products"));
+          querySnapshot.forEach((doc) => {
+            console.log("لقيت منتج:", doc.data());
+          });
+        } catch (e) {
+          console.log("لسه مفيش منتجات أو حصل خطأ:", e);
+        }
+      }
+
+      loadProducts();
+    </script>
+  </body>
+</html>
+
 </body>
+
 </html>
