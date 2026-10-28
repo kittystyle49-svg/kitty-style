@@ -1808,7 +1808,57 @@ ${itemsListStr}
             if (countBadge) countBadge.textContent = productsCount;
           });
         }
-        loadProductsRealtime();
+
+      function loadProductsRealtime() {
+    const grid = document.getElementById("productsGrid");
+    if (!grid) return;
+
+    db.collection("products").onSnapshot((snapshot) => {
+        grid.innerHTML = "";
+        let productsCount = 0;
+
+        snapshot.forEach((doc) => {
+            const p = doc.data();
+            const pId = doc.id;
+            productsCount++;
+
+            // سحب البيانات بمرونة تامة (سواء بالإنجلش أو العربي لو متخزنة كده)
+            const productName = p.name || p.title || p.اسم_المنتج || "منتج";
+            const productPrice = p.price || p.سعر || 0;
+            const productStock = p.stock !== undefined ? p.stock : (p.الكمية !== undefined ? p.الكمية : 10);
+            const productImage = p.image || p.img || p.صورة || "";
+
+            const isSoldOut = productStock <= 0;
+
+            const card = document.createElement("div");
+            card.className = "bg-white rounded-2xl p-3 border border-pink-100 flex flex-col justify-between relative shadow-sm";
+            
+            card.innerHTML = `
+                ${isSoldOut ? '<span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">خلصت (Sold Out)</span>' : ''}
+                <div>
+                    <div class="w-full h-36 bg-pink-50 rounded-xl overflow-hidden mb-2">
+                        <img src="${productImage}" alt="${productName}" class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-extrabold text-sm text-gray-900">${productName}</h4>
+                    <p class="text-xs text-gray-500">المخزون: <span class="font-bold ${productStock < 3 ? 'text-red-500' : 'text-gray-700'}">${productStock} قطع</span></p>
+                </div>
+                <div class="flex items-center justify-between pt-2 mt-2 border-t border-gray-100">
+                    <span class="font-black text-brand-600 text-sm">${productPrice} ج.م</span>
+                    <button onclick="addToCart('${pId}')" ${isSoldOut ? 'disabled' : ''} class="bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 text-white text-xs font-bold px-3 py-1.5 rounded-xl">
+                        ${isSoldOut ? 'خلصت' : 'أضف للسلة'}
+                    </button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        const countBadge = document.getElementById("productsCountBadge");
+        if (countBadge) countBadge.innerText = productsCount;
+    });
+}
+
+// استدعاء الدالة
+loadProductsRealtime();
       </script>
     </body>
   </html>
